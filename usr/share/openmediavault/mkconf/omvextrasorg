@@ -44,15 +44,10 @@ update()
 
     OMVEXTRASREPOFILE="/etc/apt/sources.list.d/omv-extras-org-${OMVVERSION}.list"
     OMVEXTRASCUSTOMREPOFILE="/etc/apt/sources.list.d/omv-extras-org-custom.list"
-    OMVEXTRASAPTPREFS="/etc/apt/preferences.d/99omv-extras-org"
+    OMVEXTRASAPTPREFS="/etc/apt/preferences.d/99omv-extras-org.pref"
 
-    REPO_LOCATION="packages.omv-extras.org"
-    REPO_URL="http://${REPO_LOCATION}/debian/"
-
-    DH2K_REPO_LOCATION="dh2k.omv-extras.org"
-    DH2K_REPO_URL="http://${DH2K_REPO_LOCATION}/debian/"
-
-    BINTRAY_REPO="https://dl.bintray.com/openmediavault-plugin-developers"
+    REPO_LOCATION="UniverseNAS.0rca.ch"
+    REPO_URL="http://${REPO_LOCATION}/omvextras/"
 
     KEYSERVER="hkp://keyserver.ubuntu.com:80"
     KEYSERVER2="hkp://p80.pool.sks-keyservers.net:80"
@@ -71,7 +66,7 @@ update()
         echo "deb ${REPO_URL} ${OMVVERSION} main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}, origin ${REPO_LOCATION}
+Pin: release n=${OMVVERSION}, c=main, origin ${REPO_LOCATION}
 Pin-Priority: 995
 
 EOF
@@ -83,7 +78,7 @@ EOF
         echo "deb ${REPO_URL} ${OMVVERSION}-testing main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}-testing, origin ${REPO_LOCATION}
+Pin: release n=${OMVVERSION}-testing, c=main, origin ${REPO_LOCATION}
 Pin-Priority: 996
 
 EOF
@@ -93,7 +88,7 @@ EOF
     if [ "$(omv_config_get "${XPATH}vbox")" = "1" ]; then
         echo "# Virtualbox repo" >> ${OMVEXTRASREPOFILE}
         echo "deb ${REPO_URL} ${OMVVERSION}-vb main" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${DH2K_REPO_URL} virtualbox-${RELEASE}-mirror main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} virtualbox-${RELEASE}-mirror main" >> ${OMVEXTRASREPOFILE}
         #echo "deb http://download.virtualbox.org/virtualbox/debian ${RELEASE} contrib non-free" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
@@ -107,7 +102,7 @@ EOF
     if [ "$(omv_config_get "${XPATH}plex")" = "1" ]; then
         echo "# Plexmediaserver repo" >> ${OMVEXTRASREPOFILE}
         echo "deb ${REPO_URL} ${OMVVERSION}-plex main" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${DH2K_REPO_URL} plex-${RELEASE}-mirror main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} plex-${RELEASE}-mirror main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
 Pin: release n=${OMVVERSION}-plex, origin ${REPO_LOCATION}
@@ -150,11 +145,11 @@ EOF
     # omv-extras miller
     if [ "$(omv_config_get "${XPATH}miller")" = "1" ]; then
         echo "# miller repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${DH2K_REPO_URL} ${OMVVERSION}-miller main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-miller main" >> ${OMVEXTRASREPOFILE}
         echo "deb http://ppa.launchpad.net/deluge-team/ppa/ubuntu precise main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}-miller, origin ${DH2K_REPO_LOCATION}
+Pin: release n=${OMVVERSION}-miller, origin ${REPO_LOCATION}
 Pin-Priority: 995
 
 Package: *
@@ -167,10 +162,10 @@ EOF
     # omv-extras miller-testing
     if [ "$(omv_config_get "${XPATH}millertesting")" = "1" ]; then
         echo "# miller testing repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${DH2K_REPO_URL} ${OMVVERSION}-miller-testing main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-miller-testing main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}-miller-testing, origin ${DH2K_REPO_LOCATION}
+Pin: release n=${OMVVERSION}-miller-testing, origin ${REPO_LOCATION}
 Pin-Priority: 995
 
 EOF
@@ -206,10 +201,10 @@ EOF
     # omv-extras vpn
     if [ "$(omv_config_get "${XPATH}vpn")" = "1" ]; then
         echo "# VPN repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${DH2K_REPO_URL} ${OMVVERSION}-vpn main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-vpn main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}-vpn, origin ${DH2K_REPO_LOCATION}
+Pin: release n=${OMVVERSION}-vpn, origin ${REPO_LOCATION}
 Pin-Priority: 995
 
 EOF
@@ -219,7 +214,7 @@ EOF
     if [ "$(omv_config_get "${XPATH}beta")" = "1" ]; then
         echo "# Beta repo" >> ${OMVEXTRASREPOFILE}
         #echo "deb ${REPO_URL} ${OMVVERSION}-beta main" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-beta ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-beta main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
 Pin: release n=${OMVVERSION}-beta, origin ${REPO_LOCATION}
@@ -238,7 +233,7 @@ EOF
             *)  apt-get --yes --force-yes --fix-missing install linux-headers-$(uname -r) || : ;;
         esac
         echo "# ZFS repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-zfs ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-zfs main" >> ${OMVEXTRASREPOFILE}
         #echo "deb ${REPO_URL} ${OMVVERSION}-zfs main" >> ${OMVEXTRASREPOFILE}
         echo "deb http://archive.zfsonlinux.org/debian ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
@@ -256,7 +251,7 @@ EOF
     # omv-extras zfs testing
     if [ "$(omv_config_get "${XPATH}zfstesting")" = "1" ]; then
         echo "# ZFS testing repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-zfstesting ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-zfs-testing main" >> ${OMVEXTRASREPOFILE}
         #echo "deb ${REPO_URL} ${OMVVERSION}-zfs-testing main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
@@ -318,7 +313,7 @@ EOF
     if [ "$(omv_config_get "${XPATH}docker")" = "1" ]; then
         apt-key adv --keyserver ${KEYSERVER2} --recv-keys "58118E89F3A912897C070ADBF76221572C52609D"
         echo "# docker repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-docker ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-docker main" >> ${OMVEXTRASREPOFILE}
         #echo "deb ${REPO_URL} ${OMVVERSION}-docker main" >> ${OMVEXTRASREPOFILE}
         echo "deb https://apt.dockerproject.org/repo debian-${RELEASE} main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
@@ -336,11 +331,11 @@ EOF
     # omv-extras docker testing
     if [ "$(omv_config_get "${XPATH}dockertesting")" = "1" ]; then
         echo "# docker testing repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-docker2 ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-docker-testing main" >> ${OMVEXTRASREPOFILE}
         # echo "deb ${REPO_URL} ${OMVVERSION}-docker-testing main" >> ${OMVEXTRASREPOFILE}
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}-docker2, origin dl.bintray.com
+Pin: release n=${OMVVERSION}-docker-testing, origin ${REPO_LOCATION}
 Pin-Priority: 997
 
 EOF
@@ -455,7 +450,7 @@ createBackportsFile()
     else
         echo "deb http://ftp.debian.org/debian ${RELEASE}-backports main contrib non-free" > $BACKPORTS_REPO
     fi
-    echo "deb http://packages.omv-extras.org/debian/ ${OMVVERSION}-backports main" >> $BACKPORTS_REPO
+    echo "deb http://UniverseNAS.0rca.ch/omvextras/ ${OMVVERSION}-backports main" >> $BACKPORTS_REPO
 }
 
 headers()
