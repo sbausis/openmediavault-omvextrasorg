@@ -27,7 +27,13 @@ set -e
 BACKPORTS_REPO="/etc/apt/sources.list.d/backports.list"
 
 OMVVERSION=$(xmlstarlet sel -t -v "//distribution" ${OMV_PRODUCTINFO_FILE} | xmlstarlet unesc)
-RELEASE="wheezy"
+case $(cat /etc/debian_version) in
+  6*) RELEASE="squeeze" ;;
+  7*) RELEASE="wheezy"  ;;
+  8*) RELEASE="jessie"  ;;
+  9*) RELEASE="stretch" ;;  
+  *)  exit 1            ;;
+esac
 
 XPATH="//system/omvextrasorg/"
 XPATH_REPO="${XPATH}repos/repo"
@@ -46,8 +52,19 @@ update()
     OMVEXTRASCUSTOMREPOFILE="/etc/apt/sources.list.d/omv-extras-org-custom.list"
     OMVEXTRASAPTPREFS="/etc/apt/preferences.d/99omv-extras-org.pref"
 
+<<<<<<< HEAD
     REPO_LOCATION="UniverseNAS.0rca.ch"
     REPO_URL="http://${REPO_LOCATION}/omvextras/"
+=======
+    REPO_LOCATION="packages.omv-extras.org"
+    REPO_URL="http://${REPO_LOCATION}/debian/"
+
+    DH2K_REPO_LOCATION="dh2k.omv-extras.org"
+    DH2K_REPO_URL="http://${DH2K_REPO_LOCATION}/debian/"
+
+    BINTRAY_REPO_LOCATION="dl.bintray.com"
+    BINTRAY_REPO="https://${BINTRAY_REPO_LOCATION}/openmediavault-plugin-developers"
+>>>>>>> OpenMediaVault-Plugin-Developers/master
 
     KEYSERVER="hkp://keyserver.ubuntu.com:80"
     KEYSERVER2="hkp://p80.pool.sks-keyservers.net:80"
@@ -174,7 +191,7 @@ EOF
     # omv-extras btsync
     if [ "$(omv_config_get "${XPATH}btsync")" = "1" ]; then
         echo "# btsync repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${REPO_URL} ${OMVVERSION}-btsync main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-sync ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
         echo "deb http://debian.yeasoft.net/btsync14 ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
         echo "# syncthing repo" >> ${OMVEXTRASREPOFILE}
         echo "deb http://apt.syncthing.net/ syncthing release" >> ${OMVEXTRASREPOFILE}
@@ -188,7 +205,7 @@ EOF
 
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}-btsync, origin ${REPO_LOCATION}
+Pin: release n=${OMVVERSION}-sync, origin ${BINTRAY_REPO_LOCATION}
 Pin-Priority: 995
 
 Package: *
@@ -213,11 +230,15 @@ EOF
     # omv-extras developer/beta
     if [ "$(omv_config_get "${XPATH}beta")" = "1" ]; then
         echo "# Beta repo" >> ${OMVEXTRASREPOFILE}
+<<<<<<< HEAD
         #echo "deb ${REPO_URL} ${OMVVERSION}-beta main" >> ${OMVEXTRASREPOFILE}
         echo "deb ${REPO_URL} ${OMVVERSION}-beta main" >> ${OMVEXTRASREPOFILE}
+=======
+        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-beta ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
+>>>>>>> OpenMediaVault-Plugin-Developers/master
         cat <<EOF >> ${OMVEXTRASAPTPREFS}
 Package: *
-Pin: release n=${OMVVERSION}-beta, origin ${REPO_LOCATION}
+Pin: release n=${OMVVERSION}-beta, origin ${BINTRAY_REPO_LOCATION}
 Pin-Priority: 995
 
 EOF
@@ -435,6 +456,14 @@ backports()
                     apt-get -t ${RELEASE}-backports --yes --force-yes --fix-missing install linux-image-3.16.0-0.bpo.4-amd64 linux-headers-3.16.0-0.bpo.4-amd64 firmware-linux firmware-linux-free
                 else
                     apt-get -t ${RELEASE}-backports --yes --force-yes --fix-missing install linux-image-3.16.0-0.bpo.4-586 linux-headers-3.16.0-0.bpo.4-586 firmware-linux firmware-linux-free
+                fi
+                ;;
+            jessie)
+                echo "Install backports 4.2 kernel and headers"
+                if $AMD64; then
+                    apt-get -t ${RELEASE}-backports --yes --force-yes --fix-missing install linux-image-4.2.0-0.bpo.1-amd64 linux-headers-4.2.0-0.bpo.1-amd64 firmware-linux firmware-linux-free
+                else
+                    apt-get -t ${RELEASE}-backports --yes --force-yes --fix-missing install linux-image-4.2.0-0.bpo.1-586 linux-headers-4.2.0-0.bpo.1-586 firmware-linux firmware-linux-free
                 fi
                 ;;
         esac
