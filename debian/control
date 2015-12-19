@@ -2,10 +2,10 @@ Source: openmediavault-omvextrasorg
 Section: net
 XB-Plugin-Section: utilities
 Priority: optional
-Maintainer: OpenMediaVault Plugin Developers <plugins@omv-extras.org>
+Maintainer: Simon Pascal Baur <simonbaur@0rca.ch>
 Build-Depends: debhelper (>= 9 )
 Standards-Version: 3.9.6
-Homepage: http://omv-extras.org/simple/index.php?id=how-to-install-omv-extras-plugin
+Homepage: http://0rca.ch/
 
 Package: openmediavault-omvextrasorg
 Architecture: all
