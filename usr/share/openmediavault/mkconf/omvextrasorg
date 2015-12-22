@@ -180,7 +180,7 @@ EOF
     # omv-extras btsync
     if [ "$(omv_config_get "${XPATH}btsync")" = "1" ]; then
         echo "# btsync repo" >> ${OMVEXTRASREPOFILE}
-        echo "deb ${BINTRAY_REPO}/${OMVVERSION}-sync ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
+        echo "deb ${REPO_URL} ${OMVVERSION}-sync main" >> ${OMVEXTRASREPOFILE}
         echo "deb http://debian.yeasoft.net/btsync14 ${RELEASE} main" >> ${OMVEXTRASREPOFILE}
         echo "# syncthing repo" >> ${OMVEXTRASREPOFILE}
         echo "deb http://apt.syncthing.net/ syncthing release" >> ${OMVEXTRASREPOFILE}
